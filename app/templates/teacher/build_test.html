@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Select Child</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- CSS Libraries -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <!--Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .question-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f1f1f1;
+        }
+
+        .text-center-custom {
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0">
+            <a href="{{ url_for('teacher_bp.Teacher_Index') }}" class="navbar-brand">
+                <h1 class="m-0 text-primary"><i class="fa fa-book-reader me-3"></i>MathTake</h1>
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav mx-auto">
+                    <a href="{{ url_for('teacher_bp.Teacher_Index') }}" class="nav-item nav-link active">Home</a>
+                    <a href="#about" class="nav-item nav-link">About Us</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
+                            <a href="{{ url_for('teacher_bp.scheduling') }}" class="dropdown-item">Scheduling Private
+                                Lesson</a>
+                            <a href="{{ url_for('teacher_bp.teacher_private_lessons') }}" class="dropdown-item">ZOOM
+                                Lesson</a>
+                            <a href="{{ url_for('teacher_bp.select_student') }}" class="dropdown-item">Build Test For
+                                Student After Private Lesson</a>
+                            <a href="{{ url_for('teacher_bp.view_posts') }}" class="dropdown-item">Posts</a>
+                            <a href="{{ url_for('teacher_bp.view_salary') }}" class="dropdown-item">salary</a>
+                            <a href="{{ url_for('teacher_bp.student_report') }}" class="dropdown-item">Report</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('teacher_bp.profile_teacher_form') }}"
+                    class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Profile<i
+                        class="fa fa-arrow-right ms-3"></i></a>
+                <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">logout<i
+                        class="fa fa-arrow-right ms-3"></i></a>
+            </div>
+        </nav>
+        <!-- Navbar End -->
+
+
+
+        <!-- Page Header Start -->
+        <div class="container-xxl py-5 page-header position-relative mb-5">
+            <div class="container py-5">
+                <div class="text-center-custom">
+                    <h1 class="display-2 text-white animated slideInDown mb-4">Build Test</h1>
+                    <h4 class="display-7 text-white animated slideInDown mb-4">for {{ student_email }}</h4>
+                </div>
+
+            </div>
+        </div>
+        <!-- Page Header End -->
+
+
+        <div class="container">
+            <form id="testForm" action="{{ url_for('teacher_bp.save_test') }}" method="POST">
+                <div class="form-group">
+                    <h5 for="numQuestions">How many questions do you want to include in the test?</h5>
+                    <select id="numQuestions" name="numQuestions" class="form-control" required>
+                        <option value="">Select number of questions</option>
+                        {% for i in range(1, 11) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="generateQuestions()">Generate
+                    Questions</button>
+
+                <div id="questions" style="display:none;">
+                    <!-- This section will be populated with question inputs -->
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="saveTestBtn" style="display: none;">Save Test</button>
+            </form>
+
+        </div>
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-light mb-4">Quick Links</h5>
+                        <a href="{{ url_for('teacher_bp.Teacher_Index') }}" class="nav-item nav-link active">Home</a>
+                        <a class="btn btn-link" href="#about">About Us</a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-light mb-4">Contact Us</h5>
+                        <p><i class="fa fa-map-marker-alt me-3"></i>Sami Shaamon, beer sheva, Israel</p>
+                        <p><i class="fa fa-phone-alt me-3"></i>+972 845 6789</p>
+                        <p><i class="fa fa-envelope me-3"></i>MathTake@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script>
+        function generateQuestions() {
+            const numQuestions = parseInt(document.getElementById('numQuestions').value);
+            const container = document.getElementById('questions');
+            const saveTestBtn = document.getElementById('saveTestBtn');
+
+            if (isNaN(numQuestions) || numQuestions < 1) {
+                alert('Please select a valid number of questions.');
+                return;
+            }
+
+            container.innerHTML = ''; // Clear previous questions
+            container.style.display = 'block';
+            saveTestBtn.style.display = 'block';
+
+            for (let i = 1; i <= numQuestions; i++) {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.innerHTML = `
+                    <h4>Question ${i}</h4>
+                    <div class="form-group">
+                        <label>Question:</label>
+                        <input type="text" class="form-control" name="questions[${i}][question]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Option 1:</label>
+                        <input type="text" class="form-control" name="questions[${i}][option1]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Option 2:</label>
+                        <input type="text" class="form-control" name="questions[${i}][option2]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Option 3:</label>
+                        <input type="text" class="form-control" name="questions[${i}][option3]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Option 4:</label>
+                        <input type="text" class="form-control" name="questions[${i}][option4]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Correct Answer:</label>
+                        <input type="text" class="form-control" name="questions[${i}][correct_answer]" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Explanation:</label>
+                        <textarea class="form-control" name="questions[${i}][explanation]" required></textarea>
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            }
+        }
+
+        document.getElementById('testForm').addEventListener('submit', function (event) {
+            const numQuestions = parseInt(document.getElementById('numQuestions').value);
+            let valid = true;
+
+            for (let i = 1; i <= numQuestions; i++) {
+                const correctAnswer = document.querySelector(`[name="questions[${i}][correct_answer]"]`).value.trim();
+                const option1 = document.querySelector(`[name="questions[${i}][option1]"]`).value.trim();
+                const option2 = document.querySelector(`[name="questions[${i}][option2]"]`).value.trim();
+                const option3 = document.querySelector(`[name="questions[${i}][option3]"]`).value.trim();
+                const option4 = document.querySelector(`[name="questions[${i}][option4]"]`).value.trim();
+
+                if (![option1, option2, option3, option4].includes(correctAnswer)) {
+                    alert(`Correct answer for Question ${i} must match one of the options.`);
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (!valid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>

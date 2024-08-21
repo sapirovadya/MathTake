@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Profile</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <script>
+        function showParentEmailField() {
+            var role = document.getElementById("role").value;
+            var parentEmailField = document.getElementById("parent-email-field");
+            if (role === "Student") {
+                parentEmailField.style.display = "block";
+            } else {
+                parentEmailField.style.display = "none";
+            }
+        }
+
+        function validateName(event) {
+            var nameInput = document.getElementById("name");
+            var nameValue = nameInput.value;
+            var nameError = document.getElementById("name-error");
+
+            if (/\d/.test(nameValue)) {
+                nameError.textContent = "The name cannot contain numbers.";
+                nameError.style.display = "block";
+                event.preventDefault();
+            } else {
+                nameError.style.display = "none";
+            }
+        }
+
+        function validatePhone(event) {
+            var phoneInput = document.getElementById("phone");
+            var phoneValue = phoneInput.value;
+            var phoneError = document.getElementById("phone-error");
+
+            if (!/^\d{10}$/.test(phoneValue)) {
+                phoneError.textContent = "The phone number must be exactly 10 digits and can only include numbers.";
+                phoneError.style.display = "block";
+                event.preventDefault();
+            } else {
+                phoneError.style.display = "none";
+            }
+        }
+
+        window.onload = function() {
+            var form = document.querySelector("form");
+            form.addEventListener("submit", function(event) {
+                validateName(event);
+                validatePhone(event);
+            });
+        };
+    </script>
+
+    <style>
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+
+<body> 
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0">
+                <a href="{{ url_for('teacher_bp.Teacher_Index') }}" class="navbar-brand">
+                    <h1 class="m-0 text-primary"><i class="fa fa-book-reader me-3"></i>MathTake</h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a href="{{ url_for('teacher_bp.Teacher_Index') }}" class="nav-item nav-link active">Home</a>
+                        <a href="#about" class="nav-item nav-link">About Us</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
+                                <a href="{{ url_for('teacher_bp.scheduling') }}" class="dropdown-item">Scheduling Private Lesson</a>
+                                <a href="{{ url_for('teacher_bp.teacher_private_lessons') }}" class="dropdown-item">ZOOM
+                                    Lesson</a>
+                                <a href="{{ url_for('teacher_bp.select_student') }}" class="dropdown-item">Build Test For Student After Private Lesson</a>
+                                <a href="{{ url_for('teacher_bp.view_posts') }}" class="dropdown-item">Posts</a>
+                                <a href="{{ url_for('teacher_bp.view_salary') }}" class="dropdown-item">salary</a>
+                                <a href="{{ url_for('teacher_bp.student_report') }}" class="dropdown-item">Report</a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('teacher_bp.profile_teacher_form') }}"
+                        class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Profile<i
+                            class="fa fa-arrow-right ms-3"></i></a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">logout<i
+                            class="fa fa-arrow-right ms-3"></i></a>
+                </div>
+            </nav>
+            <!-- Navbar End -->
+
+    <div class="container-xxl bg-white p-0">
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="bg-light rounded">
+                    <div class="row g-0">
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                            <div class="h-100 d-flex flex-column justify-content-center p-5">
+                                <h1 class="mb-4">Profile</h1>
+                                {% if error %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </div>
+                                {% endif %}
+                                <form action="" method="post">
+                                    <div class="row g-3">
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input id="name" name="name" class="form-control border-0" placeholder="Full name" type="text" value="{{ teacher.name }}" required>
+                                                <label for="name">Full name</label>
+                                            </div>
+                                            <div id="name-error" class="error">The name cannot contain numbers.</div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input id="email" name="email" class="form-control border-0" placeholder="Email address" type="email" value="{{ teacher.email }}" required>
+                                                <label for="email">Email address</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input id="phone" name="phone" class="form-control border-0" placeholder="Phone number" type="text" value="{{ teacher.phone }}" required>
+                                                <label for="phone">Phone number</label>
+                                            </div>
+                                            <div id="phone-error" class="error">The phone number must be exactly 10 digits and can only include numbers.</div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input id="password" name="password" class="form-control border-0" placeholder="Create password" type="password" value="{{ teacher.password }}" required>
+                                                <label for="password">Create password</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <button class="btn btn-primary w-100 py-3" type="submit">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s" style="min-height: 400px;">
+                            <div class="position-relative h-100">
+                                <img class="position-absolute w-100 h-100 rounded" src="{{ url_for('static', filename='img/appointment.jpg') }}" style="object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

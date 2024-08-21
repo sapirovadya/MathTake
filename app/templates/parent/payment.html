@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Payment</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <!-- CSS for the modal -->
+    <style>
+        .modal-content {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkmark-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #28a745;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .checkmark-circle-background {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .checkmark {
+            font-size: 50px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0">
+            <a href="{{url_for('parent_bp.Parent_Index') }}" class="navbar-brand">
+                <h1 class="m-0 text-primary"><i class="fa fa-book-reader me-3"></i>MathTake</h1>
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav mx-auto">
+                    <a href="{{url_for('parent_bp.Parent_Index') }}" class="nav-item nav-link active">Home</a>
+                    <a href="#about" class="nav-item nav-link">About Us</a>
+                    <a href="{{ url_for('users_bp_main.FQA_page') }}" class="nav-item nav-link">FAQ</a>
+                    <!-- Added FAQ link -->
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
+                            <a href="{{ url_for('parent_bp.Tips_page') }}" class="dropdown-item">Tips</a>
+                            <a href="{{ url_for('parent_bp.lessons_payments_page') }}" class="dropdown-item">lessons
+                                payments</a>
+                            <a href="{{ url_for('parent_bp.select_child') }}" class="dropdown-item">Child Process</a>
+                            <a href="{{ url_for('parent_bp.select_child_uploadQ') }}" class="dropdown-item">Upload
+                                Question</a>
+                            <a href="{{ url_for('parent_bp.view_reports') }}" class="dropdown-item">Reports</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('parent_bp.profile_parent_form') }}"
+                    class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Profile<i
+                        class="fa fa-arrow-right ms-3"></i></a>
+                <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">logout<i
+                        class="fa fa-arrow-right ms-3"></i></a>
+            </div>
+        </nav>
+        <!-- Navbar End -->
+
+
+        <!-- Payment Form Start -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                    <h1 class="mb-3">Credit Card Payment</h1>
+                    <p>Complete the form below to process your payment.</p>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
+                        <form id="paymentForm"
+                            action="{{ url_for('parent_bp.process_payment', lesson_id=lesson['_id']) }}" method="POST"
+                            novalidate>
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Credit Card Number:</label>
+                                <input type="text" class="form-control" id="cardNumber" minlength="8" maxlength="16"
+                                    oninput="validateCardNumber(this)" required>
+                                <div class="invalid-feedback">Please enter a valid credit card number (8-16 digits).
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expiryDate" class="form-label">Expiry Date:</label>
+                                <input type="text" class="form-control" id="expiryDate" maxlength="5"
+                                    oninput="formatExpiryDate(this)" required>
+                                <div class="invalid-feedback" id="expiryDateFeedback">Please enter a valid expiry date
+                                    (MM/YY).</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cvv" class="form-label">CVV:</label>
+                                <input type="text" class="form-control" id="cvv" maxlength="3"
+                                    oninput="validateInputLength(this, 3)" required>
+                                <div class="invalid-feedback">Please enter a valid CVV (3 digits).</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id" class="form-label">ID:</label>
+                                <input type="text" class="form-control" id="id" maxlength="9"
+                                    oninput="validateInputLength(this, 9)" required>
+                                <div class="invalid-feedback">Please enter a valid ID number (9 digits).</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Full Name:</label>
+                                <input type="text" class="form-control" id="fullName" oninput="validateName(this)"
+                                    required>
+                                <div class="invalid-feedback">Please enter your full name.</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary py-3 px-5">Submit Payment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Payment Form End -->
+
+        <!-- Success Modal -->
+        <div id="successModal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content text-center p-4">
+                    <div class="modal-body">
+                        <div class="checkmark-circle">
+                            <div class="checkmark-circle-background"></div>
+                            <div class="checkmark">✓</div>
+                        </div>
+                        <h3 class="mt-3">Thank you!</h3>
+                        <p>Your payment was successful.</p>
+                        <button type="button" class="btn btn-primary mt-3" onclick="redirectToHome()">Return to
+                            Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h3 class="text-white mb-4">Get In Touch</h3>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h3 class="text-white mb-4">Quick Links</h3>
+                        <a class="btn btn-link text-white-50" href="">About Us</a>
+                        <a class="btn btn-link text-white-50" href="">Contact Us</a>
+                        <a class="btn btn-link text-white-50" href="">Our Services</a>
+                        <a class="btn btn-link text-white-50" href="">Privacy Policy</a>
+                        <a class="btn btn-link text-white-50" href="">Terms & Condition</a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h3 class="text-white mb-4">Photo Gallery</h3>
+                        <div class="row g-2 pt-2">
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1"
+                                    src="{{ url_for('static', filename='img/classes-1.jpg') }}" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1"
+                                    src="{{ url_for('static', filename='img/classes-2.jpg') }}" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1"
+                                    src="{{ url_for('static', filename='img/classes-3.jpg') }}" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1"
+                                    src="{{ url_for('static', filename='img/classes-4.jpg') }}" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1"
+                                    src="{{ url_for('static', filename='img/classes-5.jpg') }}" alt="">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid rounded bg-light p-1"
+                                    src="{{ url_for('static', filename='img/classes-6.jpg') }}" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h3 class="text-white mb-4">Newsletter</h3>
+                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+                        <div class="position-relative mx-auto" style="max-width: 400px;">
+                            <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text"
+                                placeholder="Your email">
+                            <button type="button"
+                                class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved.
+
+                            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                            Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
+                            <br>Distributed By: <a class="border-bottom" href="https://themewagon.com"
+                                target="_blank">ThemeWagon</a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="">Home</a>
+                                <a href="">Cookies</a>
+                                <a href="">Help</a>
+                                <a href="">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+
+    <script>
+        function validateInputLength(input, length) {
+            input.value = input.value.replace(/\D/g, '').substring(0, length);
+            if (input.value.length !== length) {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+            } else {
+                input.classList.add('is-valid');
+                input.classList.remove('is-invalid');
+            }
+        }
+
+        function validateCardNumber(input) {
+            input.value = input.value.replace(/\D/g, '');
+            if (input.value.length < 8 || input.value.length > 16) {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+            } else {
+                input.classList.add('is-valid');
+                input.classList.remove('is-invalid');
+            }
+        }
+
+        function formatExpiryDate(input) {
+            input.value = input.value.replace(/[^0-9\/]/g, '').replace(/(\d{2})(\d{1,2})/, '$1/$2').substring(0, 5);
+            var parts = input.value.split('/');
+            if (parts.length === 2) {
+                var month = parseInt(parts[0], 10);
+                var year = parseInt(parts[1], 10);
+                if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
+                    input.classList.add('is-invalid');
+                    input.classList.remove('is-valid');
+                    document.getElementById('expiryDateFeedback').innerText = 'Invalid month';
+                } else {
+                    var currentDate = new Date();
+                    var currentMonth = currentDate.getMonth() + 1;
+                    var currentYear = currentDate.getFullYear() % 100; // Get last two digits of year
+                    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                        input.classList.add('is-invalid');
+                        input.classList.remove('is-valid');
+                        document.getElementById('expiryDateFeedback').innerText = 'Credit card has expired';
+                    } else {
+                        input.classList.add('is-valid');
+                        input.classList.remove('is-invalid');
+                        document.getElementById('expiryDateFeedback').innerText = 'Please enter a valid expiry date (MM/YY).';
+                    }
+                }
+            } else {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+            }
+        }
+
+        function validateName(input) {
+            input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
+            if (input.value.trim() === '') {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+            } else {
+                input.classList.add('is-valid');
+                input.classList.remove('is-invalid');
+            }
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var form = event.target;
+
+            // Check all fields validity
+            Array.from(form.elements).forEach(function (input) {
+                checkValidity(input);
+            });
+
+            // Validate expiry date
+            var expiryDateInput = document.getElementById('expiryDate');
+            var expiryDateValue = expiryDateInput.value;
+            var parts = expiryDateValue.split('/');
+            var month = parseInt(parts[0], 10);
+            var year = parseInt('20' + parts[1], 10);
+            var currentDate = new Date();
+            var currentMonth = currentDate.getMonth() + 1;
+            var currentYear = currentDate.getFullYear();
+
+            if (month < 1 || month > 12) {
+                alert('Invalid month in expiry date.');
+                expiryDateInput.classList.add('is-invalid');
+                return;
+            }
+
+            if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                alert('Credit card has expired.');
+                expiryDateInput.classList.add('is-invalid');
+                return;
+            }
+
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+                alert('Please fill out the form correctly.');
+            } else {
+                form.submit();
+                showSuccessModal(); // Show the success modal
+            }
+        });
+
+        function checkValidity(input) {
+            if (input.checkValidity()) {
+                input.classList.add('is-valid');
+                input.classList.remove('is-invalid');
+            } else {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+            }
+        }
+
+        function redirectToHome() {
+            window.location.href = "{{ url_for('parent_bp.Parent_Index') }}";
+        }
+
+        function showSuccessModal() {
+            var modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>MathTake</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap"
+        rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <script>
+        function showParentEmailField() {
+            var role = document.getElementById("role").value;
+            var parentEmailField = document.getElementById("parent-email-field");
+            if (role === "Student") {
+                parentEmailField.style.display = "block";
+            } else {
+                parentEmailField.style.display = "none";
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="bg-light rounded">
+                    <div class="row g-0">
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                            <div class="h-100 d-flex flex-column justify-content-center p-5">
+                                <h1 class="mb-4">Create Account</h1>
+                                {% if error %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </div>
+                                {% endif %}
+
+                               
+                                <form action=" " method="post">
+                                    <div class="row g-3">
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input name="name" class="form-control border-0" placeholder="Full name" type="text" required
+                                                       value="{{ form_data.name if form_data is defined else '' }}">
+                                                <label for="name">Full name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input name="email" class="form-control border-0" placeholder="Email address" type="email" required
+                                                       value="{{ form_data.email if form_data is defined else '' }}">
+                                                <label for="email">Email address</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input name="phone" class="form-control border-0" placeholder="Phone number" type="text" required
+                                                       value="{{ form_data.phone if form_data is defined else '' }}">
+                                                <label for="phone">Phone number</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <select name="role" id="role" class="form-control border-0" onchange="showFieldsBasedOnRole()" required>
+                                                    <option value="" selected>Select role</option>
+                                                    <option value="Teacher" {% if form_data is defined and form_data.role == 'Teacher' %}selected{% endif %}>Teacher</option>
+                                                    <option value="Student" {% if form_data is defined and form_data.role == 'Student' %}selected{% endif %}>Student</option>
+                                                    <option value="Parent" {% if form_data is defined and form_data.role == 'Parent' %}selected{% endif %}>Parent</option>
+                                                </select>
+                                                <label for="role">Role</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" id="parent-email-field" style="display: none;">
+                                            <div class="form-floating">
+                                                <input name="parent_email" class="form-control border-0" placeholder="Parent's email" type="email"
+                                                       value="{{ form_data.parent_email if form_data is defined else '' }}">
+                                                <label for="parent_email">Parent's email</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" id="grade-range-field" style="display: none;">
+                                            <div class="form-floating">
+                                                <select name="grade_range" class="form-control border-0">
+                                                    <option value="" selected>Select grade range</option>
+                                                    <option value="1-3" {% if form_data is defined and form_data.grade_range == '1-3' %}selected{% endif %}>Grades 1-3</option>
+                                                    <option value="4-6" {% if form_data is defined and form_data.grade_range == '4-6' %}selected{% endif %}>Grades 4-6</option>
+                                                    <option value="7-9" {% if form_data is defined and form_data.grade_range == '7-9' %}selected{% endif %}>Grades 7-9</option>
+                                                    <option value="10-12" {% if form_data is defined and form_data.grade_range == '10-12' %}selected{% endif %}>Grades 10-12</option>
+                                                </select>
+                                                <label for="grade_range">Grade range</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12" id="teacher-age-field" style="display: none;">
+                                            <div class="form-floating">
+                                                <select name="teacher_age" class="form-control border-0">
+                                                    <option value="" selected>Select age</option>
+                                                    {% for age in range(18, 71) %}
+                                                    <option value="{{ age }}" {% if form_data is defined and form_data.teacher_age == age %}selected{% endif %}>{{ age }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="teacher_age">Age</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating">
+                                                <input name="password" class="form-control border-0" placeholder="Create password" type="password" required
+                                                       value="{{ form_data.password if form_data is defined else '' }}">
+                                                <label for="password">Create password</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <button class="btn btn-primary w-100 py-3" type="submit">Create Account</button>
+                                        </div>
+                                        <div class="col-12 text-center mt-3">
+                                            <p>Have an account? <a href="{{ url_for('users_bp_main.login_form') }}">Log In</a></p>
+                                        </div>
+                                    </div>
+                                </form>
+                                
+                                
+
+
+
+                            </div>
+                        </div>
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s" style="min-height: 400px;">
+                            <div class="position-relative h-100">
+                                <img class="position-absolute w-100 h-100 rounded"
+                                    src="{{ url_for('static', filename='img/appointment.jpg') }}"
+                                    style="object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
+
+    <script>
+        function showFieldsBasedOnRole() {
+            var role = document.getElementById("role").value;
+            var parentEmailField = document.getElementById("parent-email-field");
+            var gradeRangeField = document.getElementById("grade-range-field");
+            var teacherAgeField = document.getElementById("teacher-age-field");
+
+            parentEmailField.style.display = "none";
+            gradeRangeField.style.display = "none";
+            teacherAgeField.style.display = "none";
+
+            if (role === "Student") {
+                parentEmailField.style.display = "block";
+            } else if (role === "Teacher") {
+                gradeRangeField.style.display = "block";
+                teacherAgeField.style.display = "block";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

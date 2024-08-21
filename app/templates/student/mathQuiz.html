@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Quiz</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <style>
+        .modal-header {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .modal-body {
+            text-align: center;
+        }
+        .modal-body p {
+            font-size: 1.2rem;
+        }
+        .modal-footer {
+            justify-content: center;
+        }
+        .modal-footer button {
+            width: 150px;
+        }
+        .modal-correct .modal-header {
+            background-color: #4CAF50;
+        }
+        .modal-incorrect .modal-header {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+             <!-- Navbar Start -->
+             <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0">
+                <a href="{{ url_for('student_bp.displayStudentHome') }}" class="navbar-brand">
+                    <h1 class="m-0 text-primary"><i class="fa fa-book-reader me-3"></i>MathTake</h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a href="{{ url_for('student_bp.displayStudentHome') }}" class="nav-item nav-link active">Home</a>
+                        <a href="#about" class="nav-item nav-link">About Us</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
+                                <a href="{{ url_for('student_bp.list_teachers') }}" class="dropdown-item">Private Lesson</a>
+                                <a href="{{ url_for('student_bp.student_private_lessons') }}" class="dropdown-item">zoom
+                                    lesson</a>
+                                <a href="{{ url_for('student_bp.mathQuiz') }}" class="dropdown-item">Math Quiz</a>
+                                <a href="{{ url_for('student_bp.buildTest') }}" class="dropdown-item">Build And Solve Test
+                                    By AI</a>
+                                <a href="{{ url_for('student_bp.test_from_teacher') }}" class="dropdown-item">Solve Test
+                                    From Teacher</a>
+                                <a href="{{ url_for('student_bp.view_posts') }}" class="dropdown-item">Posts</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('student_bp.profile_student_form') }}"
+                        class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Profile<i
+                            class="fa fa-arrow-right ms-3"></i></a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">logout<i
+                                class="fa fa-arrow-right ms-3"></i></a>
+                </div>
+            </nav>
+            <!-- Navbar End -->
+             
+        <!-- Page Header Start -->
+        <div class="container-xxl py-5 page-header position-relative mb-5">
+            <div class="container py-5">
+                <h1 class="display-2 text-white animated slideInDown mb-4">Quiz</h1>
+                <nav aria-label="breadcrumb animated slideInDown">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Quiz</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <!-- Page Header End -->
+
+        <!-- Appointment Start -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="bg-light rounded shadow-sm">
+                    <div class="row g-0">
+                        <!-- Left side for answers -->
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                            <div class="h-100 d-flex flex-column justify-content-center p-5" id="answers">
+                                <form id="quizForm">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" id="ans1" name="answer" value="{{ ans1 }}">
+                                        <label class="form-check-label" for="ans1">{{ ans1 }}</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" id="ans2" name="answer" value="{{ ans2 }}">
+                                        <label class="form-check-label" for="ans2">{{ ans2 }}</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" id="ans3" name="answer" value="{{ ans3 }}">
+                                        <label class="form-check-label" for="ans3">{{ ans3 }}</label>
+                                    </div>
+                                    <div class="form-check mb-4">
+                                        <input class="form-check-input" type="radio" id="ans4" name="answer" value="{{ ans4 }}">
+                                        <label class="form-check-label" for="ans4">{{ ans4 }}</label>
+                                    </div>
+                                    <input type="hidden" name="correctAnswer" value="{{ correctAnswer }}">
+                                    <input type="hidden" name="explanation" value="{{ explanation }}">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Right side for the question -->
+                        <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s" style="min-height: 400px;">
+                            <div class="position-relative h-100 d-flex align-items-center justify-content-center bg-primary text-white rounded" id="question" style="padding: 20px; object-fit: cover;">
+                                <h2>{{ question }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Appointment End -->
+
+        <!-- Result Pop-Up Modal -->
+        <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resultModalLabel">Quiz Result</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="resultMessage"></p>
+                        <p id="resultExplanation"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="location.reload()">Next Question</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer Start -->
+            <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+                <div class="container">
+                    <div class="row g-5">
+                        <div class="col-lg-3 col-md-6">
+                            <h5 class="text-light mb-4">Quick Links</h5>
+                            <a href="{{ url_for('student_bp.displayStudentHome') }}"  class="nav-item nav-link active">Home</a>
+                            <a class="btn btn-link" href="#about">About Us</a>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <h5 class="text-light mb-4">Contact Us</h5>
+                            <p><i class="fa fa-map-marker-alt me-3"></i>Sami Shaamon, beer sheva, Israel</p>
+                            <p><i class="fa fa-phone-alt me-3"></i>+972 845 6789</p>
+                            <p><i class="fa fa-envelope me-3"></i>MathTake@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- Footer End -->
+        </div>
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#quizForm').on('submit', function(event) {
+                event.preventDefault();
+                
+                $.ajax({
+                    url: "{{ url_for('student_bp.submit_answer') }}",
+                    method: "POST",
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        let resultMessage = response.is_correct ? "Correct!" : "Incorrect.";
+                        let resultExplanation = "Explanation: " + response.explanation;
+                        
+                        $('#resultMessage').text(resultMessage);
+                        $('#resultExplanation').text(resultExplanation);
+
+                        // Update modal class based on correctness
+                        if (response.is_correct) {
+                            $('#resultModal .modal-content').addClass('modal-correct').removeClass('modal-incorrect');
+                        } else {
+                            $('#resultModal .modal-content').addClass('modal-incorrect').removeClass('modal-correct');
+                        }
+
+                        $('#resultModal').modal('show');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

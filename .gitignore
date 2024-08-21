@@ -1,0 +1,39 @@
+.DS_Store
+MathTakeProject
+MathTakeEnv
+.MathTakeProject
+.pytest_cache
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.venv
+ENV/
+env/
+venv/
+env.bak/
+venv.bak/
+
+# PyCharm
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Visual Studio Code
+.vscode/
+
+# Exclude Flask session files
+flask_session.*
+flask_session/
+flask_session/*

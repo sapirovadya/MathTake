@@ -1,0 +1,15 @@
+# flask related libs
+Flask
+Flask-PyMongo 
+# python -m pip install "pymongo[srv]"==3.11 
+pytest
+pytest-cov
+pytest-html
+pymongo[srv]==3.11
+mongomock
+python-dotenv
+anthropic
+google-generativeai
+# pip install -q -U google-generativeai
+Flask-Session
+

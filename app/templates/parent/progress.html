@@ -1,0 +1,330 @@
+<!-- templates/parent/progress.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Progress</title>
+    
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <!-- Chart.js Stylesheet -->
+    <style>
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 400px;
+            width: 100%;
+        }
+        .pie-chart-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .spacer {
+            margin-top: 40px;
+        }
+        .text-center {
+            text-align: center;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar Start -->
+        <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0">
+            <a href="{{url_for('parent_bp.Parent_Index') }}" class="navbar-brand">
+                <h1 class="m-0 text-primary"><i class="fa fa-book-reader me-3"></i>MathTake</h1>
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav mx-auto">
+                    <a href="{{url_for('parent_bp.Parent_Index') }}" class="nav-item nav-link active">Home</a>
+                    <a href="#about" class="nav-item nav-link">About Us</a>
+                    <a href="{{ url_for('users_bp_main.FQA_page') }}" class="nav-item nav-link">FAQ</a>
+                    <!-- Added FAQ link -->
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <div class="dropdown-menu rounded-0 rounded-bottom border-0 shadow-sm m-0">
+                            <a href="{{ url_for('parent_bp.Tips_page') }}" class="dropdown-item">Tips</a>
+                            <a href="{{ url_for('parent_bp.lessons_payments_page') }}" class="dropdown-item">lessons
+                                payments</a>
+                            <a href="{{ url_for('parent_bp.select_child') }}" class="dropdown-item">Child Process</a>
+                            <a href="{{ url_for('parent_bp.select_child_uploadQ') }}" class="dropdown-item">Upload
+                                Question</a>
+                            <a href="{{ url_for('parent_bp.view_reports') }}" class="dropdown-item">Reports</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('parent_bp.profile_parent_form') }}"
+                    class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Profile<i
+                        class="fa fa-arrow-right ms-3"></i></a>
+                <a href="{{ url_for('logout') }}" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">logout<i
+                        class="fa fa-arrow-right ms-3"></i></a>
+            </div>
+        </nav>
+        <!-- Navbar End -->
+
+        <h1 class="text-center my-4">Progress for {{ child_email }}</h1>
+        
+        {% if not progress_data.child_procss and not progress_data.tests_eval %}
+        <p class="text-center">No data available for this student.</p>
+        {% else %}
+        
+            {% if progress_data.child_procss %}
+            <div class="chart-container">
+                <h3 class="text-center">Questions Progress</h3>
+                <canvas id="questionsLineChart"></canvas>
+            </div>
+            {% endif %}
+            
+            {% if progress_data.child_procss and progress_data.tests_eval %}
+            <div class="spacer"></div>
+            {% endif %}
+            
+            {% if progress_data.tests_eval %}
+            <div class="chart-container">
+                <h3 class="text-center">Tests Progress</h3>
+                <canvas id="testsLineChart"></canvas>
+            </div>
+            {% endif %}
+            
+            <div class="pie-chart-container">
+                {% if progress_data.child_procss %}
+                <div class="chart-container">
+                    <h3 class="text-center">Questionnaire Summary</h3>
+                    <canvas id="questionnairePieChart"></canvas>
+                </div>
+                {% endif %}
+                
+                {% if progress_data.tests_eval %}
+                <div class="chart-container">
+                    <h3 class="text-center">Tests Summary</h3>
+                    <canvas id="testsPieChart"></canvas>
+                </div>
+                {% endif %}
+            </div>
+        
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressData = JSON.parse('{{ progress_data | tojson | safe }}');
+            
+            if (progressData.child_procss) {
+                // Data for questions progress
+                const questionsDates = [];
+                const questionsCorrectData = [];
+                const questionsIncorrectData = [];
+
+                progressData.child_procss.forEach(item => {
+                    questionsDates.push(item.date);
+                    questionsCorrectData.push(item.correct);
+                    questionsIncorrectData.push(item.incorrect);
+                });
+
+                // Line chart for questions progress
+                const ctxQuestionsLine = document.getElementById('questionsLineChart').getContext('2d');
+                new Chart(ctxQuestionsLine, {
+                    type: 'line',
+                    data: {
+                        labels: questionsDates,
+                        datasets: [
+                            {
+                                label: 'Correct',
+                                data: questionsCorrectData,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Incorrect',
+                                data: questionsIncorrectData,
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Dates'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Number of Answers'
+                                },
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (progressData.tests_eval) {
+                // Data for tests progress
+                const testsDates = [];
+                const testsCorrectData = [];
+                const testsIncorrectData = [];
+
+                progressData.tests_eval.forEach(item => {
+                    testsDates.push(item.date);
+                    testsCorrectData.push(item.correct);
+                    testsIncorrectData.push(item.incorrect);
+                });
+
+                // Line chart for tests progress
+                const ctxTestsLine = document.getElementById('testsLineChart').getContext('2d');
+                new Chart(ctxTestsLine, {
+                    type: 'line',
+                    data: {
+                        labels: testsDates,
+                        datasets: [
+                            {
+                                label: 'Correct',
+                                data: testsCorrectData,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Incorrect',
+                                data: testsIncorrectData,
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Dates'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Number of Answers'
+                                },
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (progressData.child_procss) {
+                // Aggregate data for questionnaire pie chart
+                const totalQuestionsCorrect = progressData.child_procss.reduce((acc, val) => acc + val.correct, 0);
+                const totalQuestionsIncorrect = progressData.child_procss.reduce((acc, val) => acc + val.incorrect, 0);
+
+                // Pie chart for questionnaire summary
+                const ctxQuestionnairePie = document.getElementById('questionnairePieChart').getContext('2d');
+                new Chart(ctxQuestionnairePie, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Correct', 'Incorrect'],
+                        datasets: [{
+                            data: [
+                                totalQuestionsCorrect,
+                                totalQuestionsIncorrect
+                            ],
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.6)',
+                                'rgba(255, 99, 132, 0.6)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (progressData.tests_eval) {
+                // Aggregate data for tests pie chart
+                const totalTestsCorrect = progressData.tests_eval.reduce((acc, val) => acc + val.correct, 0);
+                const totalTestsIncorrect = progressData.tests_eval.reduce((acc, val) => acc + val.incorrect, 0);
+
+                // Pie chart for tests summary
+                const ctxTestsPie = document.getElementById('testsPieChart').getContext('2d');
+                new Chart(ctxTestsPie, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Correct', 'Incorrect'],
+                        datasets: [{
+                            data: [
+                                totalTestsCorrect,
+                                totalTestsIncorrect
+                            ],
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.6)',
+                                'rgba(255, 99, 132, 0.6)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
